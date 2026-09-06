@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-
 export async function POST(req: Request) {
   try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Gemini API key is not configured' }, { status: 500 });
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     const { studentName, evaluations } = await req.json();
 
     const prompt = `You are an educational assistant. Synthesize the following teacher evaluation notes for student "${studentName}" into a concise executive summary for the school principal. 
